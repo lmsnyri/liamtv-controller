@@ -99,3 +99,17 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 
 #toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); background: #202636; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 10px 16px; font-size: 14px; opacity: 0; transition: all .2s; pointer-events: none; max-width: 90vw; z-index: 20; }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* TV <-> PC switch and PC power sheet */
+a.chip { display: inline-flex; align-items: center; text-decoration: none; color: inherit; }
+.chip.switch { background: rgba(94,224,198,.14); color: var(--accent); }
+.chip[hidden], a.chip[hidden] { display: none !important; }
+#view-connect .textlink { margin-top: 18px; color: var(--accent); text-decoration: none; font-size: 14px; display: inline-block; }
+.sheet { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; z-index: 30; padding: 0 12px calc(12px + env(safe-area-inset-bottom)); }
+.sheet[hidden] { display: none; }
+.sheet-card { width: 100%; max-width: 420px; background: var(--panel); border-radius: 20px; padding: 16px; display: grid; gap: 10px; text-align: center; }
+.sheet-card b { font-size: 17px; margin-bottom: 2px; }
+.sheet-card .pill { height: 52px; touch-action: manipulation; }
+.sheet-card .pill.danger { color: var(--danger); }
+.sheet-card .pill.ghost { background: transparent; color: var(--muted); }
+.sheet-card .pill.armed { background: var(--danger); color: #0b0d12; }

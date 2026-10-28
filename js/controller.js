@@ -125,6 +125,7 @@
   function onData(msg) {
     if (!msg || typeof msg !== 'object') return;
     if (msg.t === 'pong') { lastPong = Date.now(); return; }
+    if (msg.t === 'toast' && msg.text) { toast(String(msg.text)); return; }
     if (msg.t === 'welcome') {
       me.player = msg.player | 0;
       if (msg.title) { $('r-title').textContent = msg.title; document.title = msg.title + ' Controller'; }
@@ -273,6 +274,28 @@
     var p = (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
     if (p && p.then) p.then(function () { try { screen.orientation.lock('landscape').catch(function () { }); } catch (e) { } }).catch(function () { toast('Full screen is not available in this browser'); });
   });
+
+  /* ----- TV remote <-> PC gamepad switch, PC power ----- */
+  if (window.PC_MODE) {
+    $('btn-to-tv').hidden = false; $('btn-power').hidden = false; $('btn-to-pc').hidden = true; $('link-to-pc').hidden = true;
+  }
+  var armed = null, armTimer = null;
+  function disarm() { armed = null; clearTimeout(armTimer); document.querySelectorAll('[data-power]').forEach(function (b) { b.classList.remove('armed'); b.textContent = b.getAttribute('data-label'); }); }
+  document.querySelectorAll('[data-power]').forEach(function (b) {
+    b.setAttribute('data-label', b.textContent);
+    b.addEventListener('click', function () {
+      var act = b.getAttribute('data-power');
+      if (armed !== act) { disarm(); armed = act; b.classList.add('armed'); b.textContent = 'Tap again to ' + b.getAttribute('data-label').toLowerCase(); armTimer = setTimeout(disarm, 4000); buzz(15); return; }
+      disarm(); $('power-sheet').hidden = true;
+      if (!conn || !conn.open) { toast('Not connected to the PC'); return; }
+      send({ t: 'power', action: act }); buzz(40);
+    });
+  });
+  $('btn-power').addEventListener('click', function () { disarm(); $('power-sheet').hidden = false; });
+  $('power-cancel').addEventListener('click', function () { disarm(); $('power-sheet').hidden = true; });
+  $('power-sheet').addEventListener('click', function (e) { if (e.target === $('power-sheet')) { disarm(); $('power-sheet').hidden = true; } });
+  // the power sheet and links must not be swallowed by the gamepad's touch handling
+  ['power-sheet', 'btn-to-tv', 'btn-power', 'btn-to-pc'].forEach(function (id) { $(id).addEventListener('touchstart', function (e) { e.stopPropagation(); }, { passive: true }); });
 
   /* ----- connect screen ----- */
   function readCode() { return $('code').value.replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, 4); }
