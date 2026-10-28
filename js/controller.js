@@ -25,7 +25,7 @@
   document.querySelectorAll('[data-view]').forEach(function (b) {
     b.addEventListener('click', function () { manualView = b.getAttribute('data-view'); autoView(); });
   });
-  $('btn-leave').addEventListener('click', function () { wantConnect = false; disconnect(); set('ctl.code', ''); $('code').value = ''; showView('connect'); setStatus(''); });
+  $('btn-leave').addEventListener('click', function () { if (window.PC_MODE) { retryMs = 1500; connect(); return; } wantConnect = false; disconnect(); set('ctl.code', ''); $('code').value = ''; showView('connect'); setStatus(''); });
 
   /* ----- connection ----- */
   window.__log = [];
@@ -53,7 +53,28 @@
     retryTimer = setTimeout(connect, retryMs);
     retryMs = Math.min(15000, retryMs * 1.5);
   }
+  /* PC mode (page served by the gaming PC's phone-pad bridge): plain WebSocket, no room code. */
+  function connectPC() {
+    wantConnect = true;
+    disconnect();
+    setStatus('Connecting to the PC…');
+    var sock;
+    try { sock = new WebSocket(PC_MODE.wsUrl); } catch (e) { scheduleRetry('No connection'); return; }
+    var c = { open: false, send: function (m) { sock.send(JSON.stringify(m)); }, close: function () { try { sock.close(); } catch (e) { } } };
+    var timeout = setTimeout(function () { if (!c.open) { c.close(); scheduleRetry('PC not answering'); } }, 8000);
+    sock.onopen = function () {
+      c.open = true; clearTimeout(timeout); clearTimeout(retryTimer); conn = c; retryMs = 2500;
+      c.send({ t: 'hello', name: $('name').value.trim() || 'Phone', v: 1 });
+      setStatus('Connected', 'ok'); buzz(20); keepAwake();
+      lastPong = Date.now(); missedPongs = 0;
+      clearInterval(hbTimer); hbTimer = setInterval(heartbeat, 2000);
+    };
+    sock.onmessage = function (e) { var m; try { m = JSON.parse(e.data); } catch (err) { return; } onData(m); };
+    sock.onclose = function () { dbg('ws close'); if (conn === c) { conn = null; clearInterval(hbTimer); autoView(); scheduleRetry('PC went away'); } };
+    sock.onerror = function () { dbg('ws error'); };
+  }
   function connect() {
+    if (window.PC_MODE) return connectPC();
     if (!code) return;
     wantConnect = true;
     disconnect();
@@ -233,7 +254,7 @@
     navigator.wakeLock.request('screen').then(function (l) { wakeLock = l; }).catch(function () { });
   }
   document.addEventListener('visibilitychange', function () {
-    if (document.hidden) { held = {}; touches = {}; releaseAll(); sendPad(); return; }
+    if (document.hidden) { held = {}; touches = {}; releaseAll(); sendPad(); document.querySelectorAll('[data-btn].pressed').forEach(function (b) { b.classList.remove('pressed'); }); return; }
     if (wantConnect && (!conn || !conn.open)) { retryMs = 1500; connect(); }
     else if (conn && conn.open) { keepAwake(); sendPad(); }
   });
@@ -268,7 +289,14 @@
 
   var fromUrl = (/[?&]c=([a-z0-9]{4})/i.exec(location.search) || [])[1];
   $('name').value = get('ctl.name', '');
-  $('code').value = (fromUrl || get('ctl.code', '')).toUpperCase();
-  showView('connect');
-  if ($('code').value.length === 4) start();
+  if (window.PC_MODE) {               // served by the PC: no code, straight to the gamepad
+    code = 'PC'; $('code').value = 'PC';
+    if (!$('name').value) { $('name').value = 'Phone ' + Math.floor(Math.random() * 90 + 10); set('ctl.name', $('name').value); }
+    showView('connect'); setStatus('Connecting to the PC…');
+    connect();
+  } else {
+    $('code').value = (fromUrl || get('ctl.code', '')).toUpperCase();
+    showView('connect');
+    if ($('code').value.length === 4) start();
+  }
 })();
