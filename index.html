@@ -29,35 +29,43 @@
   <section class="view" id="view-remote">
     <header class="bar">
       <div class="who"><b id="r-title">LiamTV</b><span id="r-sub">Connecting…</span></div>
-      <button class="chip" data-view="pad">Gamepad</button>
+      <button class="chip" data-view="pad"><svg viewBox="0 0 24 24"><path d="M6 9h12a4 4 0 0 1 4 4v1a4 4 0 0 1-7 2.6L14 16h-4l-1 .6A4 4 0 0 1 2 14v-1a4 4 0 0 1 4-4z"/><path d="M7 12v3M5.5 13.5h3M16 12.5h.01M18.5 14h.01"/></svg>Gamepad</button>
       <button class="chip ghost" id="btn-leave" aria-label="Change code">✕</button>
     </header>
     <div class="scroll">
-      <div class="apps" id="apps"></div>
+      <div class="apps-scroll"><div class="apps" id="apps"></div></div>
+
       <div class="dpad-wrap">
         <div class="dpad ring">
-          <button class="key up"    data-key="up"    data-repeat="1" aria-label="Up">▲</button>
-          <button class="key left"  data-key="left"  data-repeat="1" aria-label="Left">◀</button>
+          <button class="key up"    data-key="up"    data-repeat="1" aria-label="Up"><svg viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></svg></button>
+          <button class="key left"  data-key="left"  data-repeat="1" aria-label="Left"><svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6"/></svg></button>
           <button class="key ok"    data-key="ok"    aria-label="OK">OK</button>
-          <button class="key right" data-key="right" data-repeat="1" aria-label="Right">▶</button>
-          <button class="key down"  data-key="down"  data-repeat="1" aria-label="Down">▼</button>
+          <button class="key right" data-key="right" data-repeat="1" aria-label="Right"><svg viewBox="0 0 24 24"><path d="M10 6l6 6-6 6"/></svg></button>
+          <button class="key down"  data-key="down"  data-repeat="1" aria-label="Down"><svg viewBox="0 0 24 24"><path d="M6 10l6 6 6-6"/></svg></button>
         </div>
       </div>
-      <div class="row three">
-        <button class="pill" data-key="back">Back</button>
-        <button class="pill" data-key="home">Home</button>
-        <button class="pill" data-key="games">Games</button>
+
+      <div class="row four">
+        <button class="ib" data-key="back"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg><span>Back</span></button>
+        <button class="ib" data-key="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Home</span></button>
+        <button class="ib" data-key="recent"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Recent</span></button>
+        <button class="ib" data-key="games"><svg viewBox="0 0 24 24"><path d="M6 9h12a4 4 0 0 1 4 4v1a4 4 0 0 1-7 2.6L14 16h-4l-1 .6A4 4 0 0 1 2 14v-1a4 4 0 0 1 4-4z"/><path d="M7 12v3M5.5 13.5h3"/></svg><span>Games</span></button>
       </div>
-      <div class="row three">
-        <button class="pill vol" data-vol="-1" data-repeat="1">Vol −</button>
-        <button class="pill" data-vol="0">Mute</button>
-        <button class="pill vol" data-vol="1" data-repeat="1">Vol +</button>
+
+      <div class="row vol">
+        <button class="pill vol" data-vol="-1" data-repeat="1" aria-label="Volume down"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 12h5"/></svg></button>
+        <button class="pill" data-vol="0" aria-label="Mute"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9l5 6M21 9l-5 6"/></svg></button>
+        <button class="pill vol" data-vol="1" data-repeat="1" aria-label="Volume up"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 12h5M18.5 9.5v5"/></svg></button>
       </div>
-      <div class="row two">
-        <button class="pill" data-key="recent">Recently opened</button>
-        <button class="pill" data-key="system">System check</button>
-      </div>
+
       <div class="games" id="games"></div>
+
+      <div class="tip" id="tip-fullscreen">
+        <b>Full screen on iPhone</b>
+        <span>Tap Share <svg viewBox="0 0 24 24" class="inline"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 11v9h14v-9"/></svg> → <b>Add to Home Screen</b>, then open it from there: no Safari bar, works sideways too. In Safari itself, turn the phone sideways and tap <b>aA</b> → <b>Hide Toolbar</b>.</span>
+        <button class="tip-close" id="tip-close" aria-label="Dismiss">✕</button>
+      </div>
+      <button class="textlink" data-key="system">System check</button>
     </div>
   </section>
 
@@ -65,6 +73,7 @@
   <section class="view" id="view-pad">
     <header class="bar">
       <div class="who"><b id="p-title">Gamepad</b><span id="p-sub"></span></div>
+      <button class="chip ghost" id="btn-fullscreen" aria-label="Full screen" hidden><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
       <button class="chip" data-view="remote">Remote</button>
       <button class="chip danger" data-key="exit">Exit game</button>
     </header>

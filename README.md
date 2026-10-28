@@ -13,6 +13,7 @@ phone into a remote for the LiamTV launcher and a gamepad for its emulator.
 - From the TV: `welcome` (player slot, app list) and `state` (screen, game, games,
   players). The page switches to the gamepad when the TV is in a game.
 
-Host it anywhere static (GitHub Pages, Netlify, …) and put the address in
-`data/tiles.js` → `remote.url`. `PREFIX`/`SIGNALING` at the top of
+Live at https://lmsnyri.github.io/liamtv-controller/ (GitHub Pages from the
+`lmsnyri/liamtv-controller` repo, branch `main`). That address is `remote.url` in
+`data/tiles.js`. To update: copy this folder's files into a checkout of the repo and push. `PREFIX`/`SIGNALING` at the top of
 `js/controller.js` must match `remote.prefix` / `remote.signaling` there.

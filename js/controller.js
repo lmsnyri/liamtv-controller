@@ -122,9 +122,16 @@
 
   function renderApps(apps) {
     var box = $('apps'); box.textContent = '';
-    apps.slice(0, 8).forEach(function (a) {
-      var b = document.createElement('button'); b.className = 'app'; b.textContent = a.name;
-      b.style.background = a.bg || '#1f2434'; b.style.color = (a.bg || '').toLowerCase() === '#ffffff' || (a.bg || '').toLowerCase() === '#fff' ? '#111' : (a.fg || '#fff');
+    apps.forEach(function (a) {
+      var b = document.createElement('button'); b.className = 'app';
+      b.style.background = a.bg || '#1f2434';
+      if (a.logo) {   // the TV sends the same wordmark it shows on its own dock
+        var img = document.createElement('img'); img.alt = a.name; img.src = a.logo;
+        img.onerror = function () { if (img.parentNode) img.parentNode.removeChild(img); b.textContent = a.name; };
+        b.appendChild(img);
+      } else b.textContent = a.name;
+      var light = /^#(f|e)[0-9a-f]{5}$/i.test(a.bg || '') || /^#fff$/i.test(a.bg || '');
+      b.style.color = light ? '#111' : (a.fg || '#fff');
       b.addEventListener('click', function () { send({ t: 'launch', name: a.name }); buzz(); toast('Opening ' + a.name + ' on the TV'); });
       box.appendChild(b);
     });
@@ -229,6 +236,21 @@
     if (document.hidden) { held = {}; touches = {}; releaseAll(); sendPad(); return; }
     if (wantConnect && (!conn || !conn.open)) { retryMs = 1500; connect(); }
     else if (conn && conn.open) { keepAwake(); sendPad(); }
+  });
+
+  /* ----- full screen: Add to Home Screen on iPhone; the Fullscreen API where it exists ----- */
+  var standalone = navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  var tip = $('tip-fullscreen');
+  if (standalone || get('ctl.tip', '') === 'off') tip.hidden = true;
+  $('tip-close').addEventListener('click', function () { tip.hidden = true; set('ctl.tip', 'off'); });
+  var fsBtn = $('btn-fullscreen'), root = document.documentElement;
+  var canFs = !standalone && !!(root.requestFullscreen || root.webkitRequestFullscreen);
+  if (canFs) fsBtn.hidden = false;
+  fsBtn.addEventListener('click', function () {
+    var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+    if (fsEl) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+    var p = (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+    if (p && p.then) p.then(function () { try { screen.orientation.lock('landscape').catch(function () { }); } catch (e) { } }).catch(function () { toast('Full screen is not available in this browser'); });
   });
 
   /* ----- connect screen ----- */
