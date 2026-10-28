@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="LiamTV">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0b0d12">
+  <title>LiamTV Controller</title>
+  <link rel="stylesheet" href="css/controller.css">
+</head>
+<body>
+  <!-- CONNECT -->
+  <section class="view" id="view-connect">
+    <div class="connect-card">
+      <h1>LiamTV</h1>
+      <p class="lead">Type the 4-letter code shown on the TV.<br><span class="muted">LiamTV → Phone remote</span></p>
+      <input id="code" class="code-input" maxlength="4" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="KX7P" inputmode="text">
+      <input id="name" class="name-input" maxlength="16" autocomplete="off" placeholder="Your name (shows on the TV)">
+      <button class="big" id="btn-connect">Connect</button>
+      <div class="status" id="connect-status"></div>
+      <p class="muted small">Works on the same Wi-Fi as the TV. Add this page to your home screen for a full-screen controller.</p>
+    </div>
+  </section>
+
+  <!-- REMOTE (menus, apps, volume) -->
+  <section class="view" id="view-remote">
+    <header class="bar">
+      <div class="who"><b id="r-title">LiamTV</b><span id="r-sub">Connecting…</span></div>
+      <button class="chip" data-view="pad">Gamepad</button>
+      <button class="chip ghost" id="btn-leave" aria-label="Change code">✕</button>
+    </header>
+    <div class="scroll">
+      <div class="apps" id="apps"></div>
+      <div class="dpad-wrap">
+        <div class="dpad ring">
+          <button class="key up"    data-key="up"    data-repeat="1" aria-label="Up">▲</button>
+          <button class="key left"  data-key="left"  data-repeat="1" aria-label="Left">◀</button>
+          <button class="key ok"    data-key="ok"    aria-label="OK">OK</button>
+          <button class="key right" data-key="right" data-repeat="1" aria-label="Right">▶</button>
+          <button class="key down"  data-key="down"  data-repeat="1" aria-label="Down">▼</button>
+        </div>
+      </div>
+      <div class="row three">
+        <button class="pill" data-key="back">Back</button>
+        <button class="pill" data-key="home">Home</button>
+        <button class="pill" data-key="games">Games</button>
+      </div>
+      <div class="row three">
+        <button class="pill vol" data-vol="-1" data-repeat="1">Vol −</button>
+        <button class="pill" data-vol="0">Mute</button>
+        <button class="pill vol" data-vol="1" data-repeat="1">Vol +</button>
+      </div>
+      <div class="row two">
+        <button class="pill" data-key="recent">Recently opened</button>
+        <button class="pill" data-key="system">System check</button>
+      </div>
+      <div class="games" id="games"></div>
+    </div>
+  </section>
+
+  <!-- GAMEPAD -->
+  <section class="view" id="view-pad">
+    <header class="bar">
+      <div class="who"><b id="p-title">Gamepad</b><span id="p-sub"></span></div>
+      <button class="chip" data-view="remote">Remote</button>
+      <button class="chip danger" data-key="exit">Exit game</button>
+    </header>
+    <div class="pad-body">
+      <div class="shoulders">
+        <button class="shoulder" data-btn="l">L</button>
+        <button class="shoulder" data-btn="r">R</button>
+      </div>
+      <div class="pad-main">
+        <div class="dpad grid">
+          <button class="cell" data-btn="up left"></button>
+          <button class="cell arrow" data-btn="up">▲</button>
+          <button class="cell" data-btn="up right"></button>
+          <button class="cell arrow" data-btn="left">◀</button>
+          <button class="cell center" disabled></button>
+          <button class="cell arrow" data-btn="right">▶</button>
+          <button class="cell" data-btn="down left"></button>
+          <button class="cell arrow" data-btn="down">▼</button>
+          <button class="cell" data-btn="down right"></button>
+        </div>
+        <div class="middle">
+          <button class="small" data-btn="select">Select</button>
+          <button class="small" data-btn="start">Start</button>
+        </div>
+        <div class="abxy">
+          <button class="face x" data-btn="x">X</button>
+          <button class="face y" data-btn="y">Y</button>
+          <button class="face a" data-btn="a">A</button>
+          <button class="face b" data-btn="b">B</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.5/peerjs.min.js"></script>
+  <script src="js/controller.js"></script>
+</body>
+</html>
