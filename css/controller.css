@@ -36,7 +36,7 @@ input { font: inherit; color: var(--text); background: var(--panel); border: 1px
 svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .chip svg { width: 18px; height: 18px; margin-right: 6px; vertical-align: -4px; }
 .scroll { flex: 1; overflow-y: auto; padding: 0 14px 24px; max-width: 480px; width: 100%; margin: 0 auto; -webkit-overflow-scrolling: touch; }
-.apps-scroll { margin: 0 -14px 10px; padding: 2px 0 6px; overflow-x: auto; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.apps-scroll { margin: 0 -14px 10px; padding: 2px 0 6px; overflow-x: auto; scroll-padding: 0 14px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .apps-scroll::-webkit-scrollbar { display: none; }
 .apps { display: grid; grid-auto-flow: column; grid-template-rows: 54px 54px; grid-auto-columns: 100px; gap: 8px; width: max-content; padding: 0 14px; }
 .apps::after { content: ''; width: 1px; grid-row: 1 / span 2; }
